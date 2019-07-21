@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using Google.Apis.Sheets.v4.Data;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-namespace GoogleSheets
+namespace GoogleSheets.Components
 {
-    public class SpreadsheetIdFromUrl : GH_Component
+    public class ExplodeSpreadSheet : GH_Component
     {
-        public static string IdRegexPattern = "/spreadsheets/d/([a-zA-Z0-9-_]+)";
-
         /// <summary>
-        /// Initializes a new instance of the SpreadsheetIdFromUrl class.
+        /// Initializes a new instance of the ExplodeSpreadSheet class.
         /// </summary>
-        public SpreadsheetIdFromUrl()
-          : base("SpreadsheetIdFromUrl", "URL -> Id",
-              "Description",
-              "GoogleSheets", "Subcategory")
+        public ExplodeSpreadSheet()
+          : base("ExplodeSpreadSheet", "SPRDSHTBOOM",
+              "Explodes a spreadsheet into its parts",
+              Settings.MainCategory, Settings.SubCategoryExplode)
         {
         }
 
@@ -25,7 +23,7 @@ namespace GoogleSheets
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Spreadsheet Url", "URL", " ", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Spreadsheet", "S", "Spreadsheet to explode", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -33,7 +31,8 @@ namespace GoogleSheets
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Spreadsheet Id", "Id", " ", GH_ParamAccess.item);
+            pManager.AddTextParameter("Title", "T", "Title of spreadsheet", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Sheets", "S", "Sheets in spreadsheet", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -42,24 +41,11 @@ namespace GoogleSheets
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            string url = " ";
+            Spreadsheet spreadSheet = null;
+            if (!DA.GetData(0, ref spreadSheet)) return;
 
-            if (!DA.GetData(0, ref url)) return;
-
-            string id = GetId(url);
-            if (string.IsNullOrEmpty(id)) return;
-
-            DA.SetData(0, id);
-        }
-
-        private string GetId(string url)
-        {
-            string regResult = Regex.Match(url, IdRegexPattern, RegexOptions.CultureInvariant, new TimeSpan(250)).Value;
-            if (regResult.Contains("/spreadsheets/d/"))
-            {
-                return regResult.Substring(16);
-            }
-            else return "";
+            DA.SetData(0, spreadSheet.Properties.Title);
+            DA.SetDataList(1, spreadSheet.Sheets);
         }
 
         /// <summary>
@@ -80,7 +66,7 @@ namespace GoogleSheets
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("01da23dc-95e9-4f46-8ee0-48029e7fdb95"); }
+            get { return new Guid("f8c02c0f-d783-4093-bb3c-8ac6fe456ecd"); }
         }
     }
 }

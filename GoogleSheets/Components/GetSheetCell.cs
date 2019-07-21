@@ -10,7 +10,7 @@ using Google.Apis.Util.Store;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-namespace GoogleSheets
+namespace GoogleSheets.Components
 {
     public class GetSheetCell : GH_Component
     {

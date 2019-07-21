@@ -78,13 +78,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GetSheetCell.cs" />
-    <Compile Include="GetSpreadSheet.cs" />
+    <Compile Include="Components\ExplodeSheet.cs" />
+    <Compile Include="Components\ExplodeSpreadSheet.cs" />
+    <Compile Include="Components\GetSheetCell.cs" />
+    <Compile Include="Components\GetSpreadSheet.cs" />
+    <Compile Include="Core\Authorizer.cs" />
+    <Compile Include="Core\Extensions.cs" />
     <Compile Include="GoogleSheetsComponent.cs" />
     <Compile Include="GoogleSheetsInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="SpreadsheetIdFromUrl.cs" />
+    <Compile Include="Components\SpreadsheetIdFromUrl.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="credentials.json">

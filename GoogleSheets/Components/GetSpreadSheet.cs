@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using Google.Apis.Sheets.v4;
 using Grasshopper.Kernel;
+using Newtonsoft.Json;
 using Rhino.Geometry;
 
-namespace GoogleSheets
+namespace GoogleSheets.Components
 {
     public class GetSpreadSheet : GH_Component
     {
@@ -12,9 +13,9 @@ namespace GoogleSheets
         /// Initializes a new instance of the GetSpreadSheet class.
         /// </summary>
         public GetSpreadSheet()
-          : base("GetSpreadSheet", "Nickname",
-              "Description",
-              "Category", "Subcategory")
+          : base("GetSpreadSheet", "GetSPRDSHT",
+              "Gets a Spreadsheet for the specified Id",
+              Settings.MainCategory, Settings.SubCategoryGet)
         {
         }
 
@@ -23,6 +24,7 @@ namespace GoogleSheets
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
+            pManager.AddTextParameter("Id", "I", "Id of spreadsheet to get", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -30,6 +32,7 @@ namespace GoogleSheets
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+            pManager.AddGenericParameter("Spreadsheet", "S", "Spreadsheet gotten from server", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -38,6 +41,21 @@ namespace GoogleSheets
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            string id = "";
+            if (!DA.GetData(0, ref id)) return;
+
+            // get authorized service
+            var service = Core.Authorizer.GetAuthorizedService();
+
+            // build request object for id
+            SpreadsheetsResource.GetRequest request = service.Spreadsheets.Get(id);
+            request.IncludeGridData = true;
+
+            // execute request, result is spreadsheet object
+            var spreadSheet = request.Execute();
+
+            // set data on output
+            DA.SetData(0, spreadSheet);
         }
 
         /// <summary>
